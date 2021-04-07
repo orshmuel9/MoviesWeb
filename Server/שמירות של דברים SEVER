@@ -1,0 +1,83 @@
+// now working also
+const addNewSubscriptionV2 = async()=>{
+    let usersdata=await axios.get("http://localhost:8080/api/users");
+    let users=usersdata.data;
+    let lastuser=users[users.length-1];
+    let obj={
+        memberId:lastuser._id,
+        movies:[]
+    }
+    console.log(obj);
+    await subscriptionsBL.addSubscription(obj);
+    console.log("added");
+}
+// not working
+const addNewSubscription = async(user)=>{
+    let obj={
+        memberId:user._id,
+        movies:[]
+    }
+    console.log(obj);
+    await subscriptionsBL.addSubscription(obj);
+    console.log("added");
+}
+
+
+// מוסיף גם לסאבסקירישן
+    // not working
+    await updateData.addNewSubscriptionV2();
+
+
+//    const updateData = require('../../Subscriptions/updateData')
+
+const updatesubscriptions = async()=>{
+    let data=await subscriptionsBL.getAllSubscriptions();
+    let arr=data.map(subscription=>{
+        return subscriptionsBL.deleteSubscription(subscription._id);
+    })
+    let usersdata=await axios.get("http://localhost:8080/api/users");
+    let users=usersdata.data;
+    users.map(user=>{
+        let obj={
+            memberId:user._id,
+            movies:[]
+        }
+        subscriptionsBL.addSubscription(obj);
+    })
+}
+let index=arr.findIndex(x=>x.id==id);
+    arr.splice(index, 1);
+    console.log(arr);
+    console.log(id);
+
+
+    //// get by member id
+router.route('/:id/memberid').get(async(req,resp)=>{
+    let id=req.params.id;
+    let subs=await axios.get(`http://localhost:8000/api/subscriptions`)
+    subs=subs.data
+    console.log(subs);
+    console.log("hey");
+    let index=subs.find(x=>x.memberId==id);
+    console.log(index);
+    if(index==-1){
+        return resp.json("no sub")
+    }
+    else{
+        return resp.json(subs[index].data);
+    }
+})
+
+// get Subscription by id
+const getSubscriptionById =(id)=>{
+    return new Promise((resolve,reject)=>{
+        Subscription.findById(id,(err,subscriptionData)=>{
+            if(err){
+                reject(err);
+            }
+            else{
+                resolve(subscriptionData);
+            }
+        })
+    })
+}
